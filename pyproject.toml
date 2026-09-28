@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "specforge"
+version = "0.1.0"
+description = "Test-faithful verification and witness-guided Dafny specification repair"
+requires-python = ">=3.10"
+dependencies = [
+  "PyYAML>=6.0",
+  "z3-solver>=4.12",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.0"]
+anthropic = ["anthropic>=0.40"]
+test = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+include = ["specforge*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+

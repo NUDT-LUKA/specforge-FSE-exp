@@ -1,0 +1,11 @@
+llm:
+  provider: openai
+  model: gpt-4o
+  temperature: 0.0
+
+verifier:
+  path: dafny
+  timeout: 45
+
+repair_rounds: 3
+

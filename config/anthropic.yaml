@@ -1,0 +1,19 @@
+llm:
+  provider: anthropic
+  model: claude-sonnet-4-6
+  temperature: 0.0
+  max_tokens: 2048
+
+verifier:
+  path: dafny
+  timeout: 45
+
+repair_rounds: 3
+
+# For translated-contract tasks that do not initially verify, configure a
+# wrapper around an independently installed proof-recovery system. The wrapper
+# reads {input} and writes a complete Dafny program to {output}.
+# proof_recovery:
+#   command: [python, path/to/wrapper.py, --input, "{input}", --output, "{output}"]
+#   timeout: 900
+
