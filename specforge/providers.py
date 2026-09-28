@@ -6,7 +6,7 @@ import os
 
 
 class OpenAIProvider:
-    def __init__(self, model: str, temperature: float = 0.0):
+    def __init__(self, model: str, temperature: float = 0.0, max_tokens: int | None = None):
         from openai import OpenAI
 
         key = os.environ.get("OPENAI_API_KEY")
@@ -15,9 +15,10 @@ class OpenAIProvider:
         self.client = OpenAI(api_key=key)
         self.model = model
         self.temperature = temperature
+        self.max_tokens = max_tokens
 
     def complete(self, system: str, prompt: str) -> str:
-        response = self.client.chat.completions.create(
+        options = dict(
             model=self.model,
             temperature=self.temperature,
             messages=[
@@ -25,6 +26,9 @@ class OpenAIProvider:
                 {"role": "user", "content": prompt},
             ],
         )
+        if self.max_tokens is not None:
+            options["max_tokens"] = self.max_tokens
+        response = self.client.chat.completions.create(**options)
         return response.choices[0].message.content or ""
 
 
@@ -58,8 +62,8 @@ def make_provider(config: dict):
         raise ValueError("The model field is required.")
     temperature = float(config.get("temperature", 0.0))
     if provider == "openai":
-        return OpenAIProvider(model, temperature)
+        tokens = config.get("max_tokens")
+        return OpenAIProvider(model, temperature, int(tokens) if tokens is not None else None)
     if provider == "anthropic":
         return AnthropicProvider(model, temperature, int(config.get("max_tokens", 2048)))
     raise ValueError("provider must be 'openai' or 'anthropic'")
-

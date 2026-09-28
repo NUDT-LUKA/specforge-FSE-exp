@@ -13,7 +13,7 @@ The wrapper writes one complete Dafny source file to the output path. `ExternalP
 
 | System | Role in the paper | Upstream source |
 |---|---|---|
-| AxDafny | Primary verifier-guided proof-recovery baseline and Phase-1 prover | [Axiomatic-AI/ax-dafny](https://github.com/Axiomatic-AI/ax-dafny) |
+| AxDafny | Primary verifier-guided proof-recovery baseline and Phase-1 prover | [code URL cited by its authors](https://github.com/Axiomatic-AI/ax-dafny); [paper](https://arxiv.org/abs/2606.32007) |
 | dafny-annotator | LLM-guided annotation search | [metareflection/dafny-annotator](https://github.com/metareflection/dafny-annotator) |
 | Laurel | Placeholder localization and example retrieval for Dafny assertions | [emugnier/dafny_repair](https://github.com/emugnier/dafny_repair) |
 | DafnyPro | Diff checking, pruning, and proof-hint augmentation | [paper and implementation description](https://arxiv.org/abs/2601.05385) |
@@ -36,4 +36,3 @@ proof_recovery:
 ```
 
 Keep the upstream checkout outside this repository so its version, environment, and license remain explicit.
-

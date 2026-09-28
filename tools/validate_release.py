@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import subprocess
 import sys
 
 
@@ -47,7 +48,17 @@ def main():
         r"(^|/)(results?|outputs?|logs?)(/|$)|\.partial\.jsonl$|\.log$",
         re.IGNORECASE,
     )
-    files = [path for path in ROOT.rglob("*") if path.is_file()]
+    try:
+        tracked = subprocess.run(
+            ["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, check=False
+        )
+    except OSError:
+        tracked = None
+    if tracked is not None and tracked.returncode == 0:
+        files = [ROOT / name.decode("utf-8") for name in tracked.stdout.split(b"\0") if name]
+    else:
+        files = [path for path in ROOT.rglob("*") if path.is_file()
+                 and ".git" not in path.relative_to(ROOT).parts]
     for path in files:
         relative = path.relative_to(ROOT).as_posix()
         if forbidden_names.search(relative):
@@ -55,17 +66,15 @@ def main():
 
     secret_pattern = re.compile(r"\bsk-[A-Za-z0-9_-]{20,}\b")
     for path in files:
-        if path.suffix.lower() not in {".py", ".md", ".yaml", ".yml", ".toml", ".txt"}:
+        if path.suffix.lower() not in {".py", ".md", ".yaml", ".yml", ".toml", ".txt", ".jsonl"}:
             continue
         text = path.read_text(encoding="utf-8", errors="ignore")
         if secret_pattern.search(text):
             fail(f"credential-like token present: {path.relative_to(ROOT)}")
 
-    baseline_python = [
-        path for path in (ROOT / "experiments").rglob("*.py")
-        if "adapters" in path.parts and path.name != "__init__.py"
-    ]
-    if baseline_python:
+    adapter_files = [path for path in (ROOT / "experiments/adapters").rglob("*.py")
+                     if path.name != "__init__.py"]
+    if adapter_files:
         fail("comparison implementation found under experiments/adapters")
 
     controlled = [
@@ -82,4 +91,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

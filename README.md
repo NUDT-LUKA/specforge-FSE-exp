@@ -75,6 +75,13 @@ python tools/validate_release.py
 
 The test suite includes offline algorithm tests, dataset-integrity checks, and a real-Dafny smoke test when Dafny is available.
 
+## Reproduce the research questions
+
+The five experiment entry points and their input/output contracts are documented in
+[EXPERIMENTS.md](EXPERIMENTS.md). RQ1--RQ3 use the frozen datasets and local
+solvers; RQ4 calls a configured official model provider or scores supplied
+candidate translations; RQ5 runs Dafny, SpecForge, and the GivenSpec condition.
+
 ## Repository layout
 
 ```text
@@ -86,4 +93,3 @@ config/                 official-provider example configurations
 tests/                  offline and Dafny smoke tests
 tools/                  release validation
 ```
-
