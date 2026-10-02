@@ -239,7 +239,7 @@ def _probe(src: str, name, params, rets, inputs, out_lits) -> str | None:
 
     ensures 只取**目标方法自己**的那一段(``spec_source``)。单方法文件里这与
     全文相同;多方法文件里混进别人的后置会引用未声明的参数名,探针在解析期就
-    炸掉,整条任务被误判为"证据不足"—— DafnyBench 的候选里有 26% 是这种文件。
+    炸掉,整条任务被误判为"证据不足"。
     """
     ens = _contract_clauses(src, name, "ensures")
     if not isinstance(out_lits, (list, tuple)) or len(out_lits) != len(rets):
@@ -352,7 +352,7 @@ def _signature_from(records: list, src: str):
     """优先用测试记录里**随任务落盘的目标签名**,拿不到才退回"文件第一个 method"。
 
     多方法文件里"第一个 method"往往不是被测目标;老数据集没有这些字段,退回旧
-    路径,因此已发表的结果仍逐位复现。"""
+    路径,以兼容旧数据格式。"""
     for r in records or []:
         if r.get("method") and r.get("params") is not None and r.get("rets"):
             return (r["method"], [tuple(p) for p in r["params"]],

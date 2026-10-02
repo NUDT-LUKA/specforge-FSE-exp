@@ -8,9 +8,8 @@
 支持的参数/返回类型见 ``_SUPPORTED``:标量(int/nat/bool/real/char)、序列
 (seq<T>/string)与数组(array<T>)。其余签名跳过(返回空用例,上层据此排除)。
 
-**目标选择(2026-08-05 扩展)**:早期版本只看文件里的**第一个 method**,因此
-DafnyBench 里"目标方法排在辅助 lemma/function 之后"的文件一律被丢弃(实测 785
-个 ground_truth 里有 186 个属于此类)。现在 ``find_targets`` 枚举全部可编译的
+**目标选择(2026-08-05 扩展)**:早期版本只看文件里的**第一个 method**,
+因此会漏掉目标方法排在辅助声明之后的文件。现在 ``find_targets`` 枚举全部可编译的
 method/function,按"legacy 优先"排序后逐个尝试 —— 第一个候选与旧实现完全一致
 (含随机数抽取顺序),故旧评测集可逐位复现,新增候选只做增量。
 """
@@ -408,7 +407,7 @@ def _tests_for_target(src, tgt: Target, dafny_path, n, seed, timeout) -> list[di
             _, _, pyval = _gen_value(pty, rng)
             if pty == "array<int>":
                 # 旧实现的怪癖:array<int> 在 _gen_value 之外**再抽一次**。
-                # 保留它,否则已发表的 107 任务评测集无法逐位复现。
+                # 保留额外抽样,以兼容旧版的随机数流和输出。
                 pyval = [rng.randint(-6, 9) for _ in range(rng.randint(1, 5))]
             inputs.append(pyval)
         harness = build_harness(src, inputs, name, params, rets)
